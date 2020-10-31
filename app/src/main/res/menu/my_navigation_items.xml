@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:title="Accueil"
+        android:icon="@drawable/ic_home"/>
+
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Profile"
+        android:icon="@drawable/ic_profile"/>
+
+    <item
+        android:id="@+id/nav_add_post"
+        android:title="Ajouter une publication"
+        android:icon="@drawable/ic_add_post"/>
+
+    <item
+        android:id="@+id/nav_log_out"
+        android:title="Se déconnecter"
+        android:icon="@drawable/logout1"/>
+</menu>

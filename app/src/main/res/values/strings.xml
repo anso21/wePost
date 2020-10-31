@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">WePost</string>
+    <string name="drawer_open">open drawer</string>
+    <string name="drawer_close">close drawer</string>
+    <string name="password">Mot de passe</string>
+    <string name="sign_in">Se connecter</string>
+    <string name="username">Pseudo</string>
+    <string name="sign_up">S\'enrigister</string>
+</resources>
