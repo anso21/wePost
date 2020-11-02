@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "825674158742",
+    "firebase_url": "https://wepost-e6eda.firebaseio.com",
+    "project_id": "wepost-e6eda",
+    "storage_bucket": "wepost-e6eda.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825674158742:android:57c89f6b542557e75268b7",
+        "android_client_info": {
+          "package_name": "app.project.wepost"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825674158742-5cq6f6ln2c18qscj1cc40is6vv6gi35l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.project.wepost",
+            "certificate_hash": "7891614893d308f4806d7ca672436d77d7a03838"
+          }
+        },
+        {
+          "client_id": "825674158742-88v4ohq6bgmusqt8dcu3rvnd4b690mol.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7e-j0qAeD2joGGHVMzfpZeG92hjnxpo4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825674158742-88v4ohq6bgmusqt8dcu3rvnd4b690mol.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
