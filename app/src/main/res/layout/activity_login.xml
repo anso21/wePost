@@ -27,10 +27,9 @@
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
                 android:layout_marginTop="@dimen/large_size"
-                android:layout_marginBottom="@dimen/medium_size"
-                android:drawableStart="@drawable/ic_profile"
-                android:hint="@string/username"
-                android:inputType="textPersonName"
+                android:drawableStart="@drawable/email"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
                 android:textAppearance="@android:style/TextAppearance.Medium"/>
 
             <EditText
@@ -50,10 +49,23 @@
                 android:layout_height="wrap_content"
                 android:text="@string/sign_in"
                 android:backgroundTint="@color/colorPrimary"
+                android:textAllCaps="true"
                 android:layout_gravity="center"
                 android:textColor="#FFF"
-                android:padding="@dimen/medium_size"
+                android:padding="@dimen/medium_16"
                 android:textAppearance="@android:style/TextAppearance.Large"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/goto_register_activity"
+                android:text="Toujours pas membre? Créer un compte."
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/colorPrimary"
+                android:paddingTop="@dimen/medium_16"
+                android:clickable="true"/>
 
         </LinearLayout>
     </ScrollView>

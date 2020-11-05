@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SetupActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/setup_profile_image"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/profile"
+            android:paddingBottom="@dimen/large_size"/>
+
+        <EditText
+            android:id="@+id/setup_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/username"
+            android:layout_margin="@dimen/medium_16"
+            android:inputType="textPersonName"
+            android:drawableStart="@drawable/username"
+            android:paddingTop="@dimen/large_size"/>
+
+        <Button
+            android:id="@+id/sav_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:text="Sauvegarder"
+            android:padding="@dimen/medium_16"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="#FFF"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

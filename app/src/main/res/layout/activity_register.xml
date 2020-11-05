@@ -22,21 +22,19 @@
                 android:src="@drawable/logo"/>
 
             <EditText
-                android:id="@+id/username"
+                android:id="@+id/register_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:layout_marginTop="@dimen/large_size"
-                android:layout_marginBottom="@dimen/medium_size"
-                android:drawableStart="@drawable/ic_profile"
-                android:hint="@string/username"
-                android:inputType="textPersonName"
+                android:layout_marginTop="@dimen/medium_size"
+                android:drawableStart="@drawable/email"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
                 android:textAppearance="@android:style/TextAppearance.Medium"/>
 
             <EditText
-                android:id="@+id/password1"
+                android:id="@+id/register_password"
                 android:layout_marginTop="@dimen/medium_size"
-                android:layout_marginBottom="@dimen/medium_size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
@@ -45,9 +43,8 @@
                 android:inputType="textPassword"
                 android:textAppearance="@android:style/TextAppearance.Medium"/>
             <EditText
-                android:id="@+id/password2"
+                android:id="@+id/confirm_password"
                 android:layout_marginTop="@dimen/medium_size"
-                android:layout_marginBottom="@dimen/medium_size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
@@ -60,10 +57,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sign_up"
+                android:textAllCaps="true"
                 android:backgroundTint="@color/colorPrimary"
                 android:layout_gravity="center"
                 android:textColor="#FFF"
-                android:padding="@dimen/medium_size"
+                android:padding="@dimen/medium_16"
                 android:textAppearance="@android:style/TextAppearance.Large"/>
         </LinearLayout>
     </ScrollView>
