@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(hToolbar);
         getSupportActionBar().setTitle("Accueil");
 
+        //Récupération des différents composants
         drawerLayout = (DrawerLayout) findViewById(R.id.drawable_view);
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
