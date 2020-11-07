@@ -1,18 +1,31 @@
 package app.project.wepost.Models;
 
+import java.util.Date;
+
 public class User {
     private String id;
     private String username;
+    private String fullName;
     private String email;
     private String profilePicture;
     private String createdAt;
 
+    public User(String username, String email) {
+    }
+
     public User(){
     }
 
-    public User(String username, String email) {
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setEmail(String email) {
         this.email = email;
-        this.username = username;
     }
 
     public String getId() {

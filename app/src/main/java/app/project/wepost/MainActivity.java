@@ -40,8 +40,6 @@ public class MainActivity extends AppCompatActivity /*implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         mAuth = FirebaseAuth.getInstance();
         myDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnClickLis
         if (currentUser == null) {
             sendUserToLoginActivity();
         } else {
-            //checkUserExistence();
+            checkUserExistence();
         }
     }
 
@@ -96,9 +94,9 @@ public class MainActivity extends AppCompatActivity /*implements View.OnClickLis
     }
 
     private void sendUserToSetupActivity() {
-        Intent SetupIntent = new Intent(MainActivity.this, SetupActivity.class);
-        SetupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(SetupIntent);
+        Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
+        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(setupIntent);
         finish();
     }
 

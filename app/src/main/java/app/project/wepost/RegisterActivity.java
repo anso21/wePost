@@ -19,6 +19,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import app.project.wepost.Models.User;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String  TAG = "Création de compte";
@@ -97,6 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+                        User user = new User();
                         sendUserToSetupActivity();
                         Log.d(TAG, "Succès");
                         Toast.makeText(RegisterActivity.this, "Votre compte a été créé avec succès.",
