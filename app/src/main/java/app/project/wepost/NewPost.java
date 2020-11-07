@@ -62,7 +62,7 @@ public class NewPost extends AppCompatActivity implements View.OnClickListener {
     private void UserMenuSelector(MenuItem item) {
         if (item.getItemId() == R.id.nav_home ){
             Toast.makeText(this, "Aller à l'acueil !", Toast.LENGTH_SHORT).show();
-            GoToHomeActivity();
+            GoToHomeActivity(); //Appellle à la fonction pour le retour à la page d'acueil
         }
     }
 
