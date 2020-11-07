@@ -7,12 +7,18 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -24,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView addPost;
     private ImageView home;
     private Toolbar hToolbar;
+    private FloatingActionButton toCreatePostBtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         addPost = findViewById(R.id.add_post);
         home = findViewById(R.id.home);
 
+        toCreatePostBtn = findViewById(R.id.toCreatePostfloatingButton);
         addPost.setOnClickListener(this);
         home.setOnClickListener(this);
 
@@ -53,6 +62,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return false;
             }
         });
+
+        toCreatePostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GoToCreateNewPostActivity();
+            }
+        });
+
+        String newPostContent = getIntent().getStringExtra("New_Post");
+        TextView showNewPostContent = findViewById(R.id.show_new_post);
+        showNewPostContent.setText(newPostContent);
+    }
+
+    private void GoToCreateNewPostActivity() {
+        Intent gotToCreateNewPostIntent = new Intent(this, NewPost.class);
+        startActivity(gotToCreateNewPostIntent);
     }
 
     @Override
@@ -69,12 +94,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.nav_home :
                 Toast.makeText(this, "Acceuil", Toast.LENGTH_SHORT).show();
                 break;
-
             case R.id.nav_profile :
                 Toast.makeText(this, "Profil", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_add_post :
                 Toast.makeText(this, "Ajouter une publicatioin", Toast.LENGTH_SHORT).show();
+                GoToCreateNewPostActivity();
                 break;
             case R.id.nav_log_out :
                 Toast.makeText(this, "Déconnecté", Toast.LENGTH_SHORT).show();
@@ -91,6 +116,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.add_post:
                 Toast.makeText(this, "Post", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.toCreatePostfloatingButton:
+                Toast.makeText(this, "Créer un nouveau post", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_home:
+                Toast.makeText(this, "Accueil !", Toast.LENGTH_SHORT).show();
+                break;
         }
+
     }
 }
