@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity /*implements View.OnClickLis
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.hasChild(currentUserId)) {
+                if (dataSnapshot.hasChild(currentUserId)) {
                     sendUserToSetupActivity();
                     Log.d("TAG", "onDataChange:");
                 }

@@ -21,6 +21,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.net.URI;
 
@@ -40,7 +43,7 @@ public class SetupActivity extends AppCompatActivity {
     private  FirebaseAuth mAuth;
     private DatabaseReference myDatabase;
     private String currentUserId;
-    //private StorageReference userProfileRef;
+    private StorageReference userProfileRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,7 @@ public class SetupActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
         myDatabase = FirebaseDatabase.getInstance().getReference();
-        //userProfileRef = FirebaseStorage.getInstance().getReference().child("Profile image");
+        userProfileRef = FirebaseStorage.getInstance().getReference().child("Profile image");
 
         loadingBar = new ProgressDialog(this);
 
@@ -84,7 +87,7 @@ public class SetupActivity extends AppCompatActivity {
         if (requestCode == 0 && resultCode == RESULT_OK && data != null ) {
             Uri imageUri = data.getData();
 
-            /*StorageReference filepath = userProfileRef.child(currentUserId + ".jpg");
+            StorageReference filepath = userProfileRef.child(currentUserId + ".jpg");
             filepath.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -93,7 +96,7 @@ public class SetupActivity extends AppCompatActivity {
                         //String downloadUri = task.getResult().getDownloadUrl().toString();
                     }
                 }
-            });*/
+            });
 
         }
     }
