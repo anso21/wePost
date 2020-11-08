@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void checkUserExistence(final String uID) {
 
         userDatabase.addValueEventListener(new ValueEventListener() {
