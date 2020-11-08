@@ -72,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
         navigationProfileImage = navView.findViewById(R.id.profile_image);
         navigationUserFullname = navView.findViewById(R.id.nav_fullname);
 
-
-
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
