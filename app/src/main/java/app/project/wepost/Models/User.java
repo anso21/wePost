@@ -1,6 +1,7 @@
 package app.project.wepost.Models;
 
 import java.util.Date;
+import java.util.HashMap;
 
 public class User {
     private String id;
@@ -10,10 +11,24 @@ public class User {
     private String profilePicture;
     private String createdAt;
 
-    public User(String username, String email) {
+    public User(String uId, String username, String fullName, String email){
+        this.id = uId;
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+        this.createdAt = new Date().toString();
     }
 
-    public User(){
+    public HashMap toMap() {
+        HashMap userMap = new HashMap();
+
+        userMap.put("uId", id);
+        userMap.put("username", username);
+        userMap.put("fullname", fullName);
+        userMap.put("email", email);
+        userMap.put("createdAt", createdAt);
+
+        return userMap;
     }
 
     public String getFullName() {

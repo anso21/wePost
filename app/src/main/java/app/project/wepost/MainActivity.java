@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
@@ -23,8 +24,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
-public class MainActivity extends AppCompatActivity /*implements View.OnClickListener*/{
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class MainActivity extends AppCompatActivity {
 
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
@@ -32,16 +36,25 @@ public class MainActivity extends AppCompatActivity /*implements View.OnClickLis
     private RecyclerView postList;
     private Toolbar hToolbar;
 
+    private CircleImageView navigationProfileImage;
+    private TextView navigationUserFullname;
+
     private  FirebaseAuth mAuth;
-    private DatabaseReference myDatabase;
+    private  String currentUserId;
+    private DatabaseReference userDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //innitialisation de l'user
         mAuth = FirebaseAuth.getInstance();
-        myDatabase = FirebaseDatabase.getInstance().getReference();
+        currentUserId = mAuth.getUid();
+
+        //pointage de la table user dans la base de données
+        userDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+
 
         hToolbar = findViewById(R.id.home_toolbar);
         setSupportActionBar(hToolbar);
@@ -52,8 +65,39 @@ public class MainActivity extends AppCompatActivity /*implements View.OnClickLis
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
+        navigationView = findViewById(R.id.navigation_view);
+        View navView = navigationView.inflateHeaderView(R.layout.my_navigation_header);
+
+        navigationProfileImage = navView.findViewById(R.id.profile_image);
+        navigationUserFullname = navView.findViewById(R.id.nav_fullname);
+
+
+        //Il faut vérifier dabord si les infos sur l'utilisateur ont été bien enregistrées avant de prendre les valeurs et afficher
+
+        userDatabase.child(currentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild("profilePicture")) {
+                        String profileUri = dataSnapshot.child("profilePicture").getValue().toString();
+                        Picasso.get().load(profileUri).placeholder(R.drawable.profile).into(navigationProfileImage);
+                    }
+
+                    if (dataSnapshot.hasChild("fullname")) {
+                        Log.d("TAG", "onDataChange: Chargement du nom");
+                        String fullname = dataSnapshot.child("fullname").getValue().toString();
+                        Log.d("TAG", "onDataChange: Fillname = " + fullname);
+                        navigationUserFullname.setText(fullname);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -63,28 +107,29 @@ public class MainActivity extends AppCompatActivity /*implements View.OnClickLis
         });
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
 
+        //récupération de l'user courant
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        Log.d("TAG", "onStart: "+ currentUser);
 
         if (currentUser == null) {
             sendUserToLoginActivity();
         } else {
-            checkUserExistence();
+            checkUserExistence(currentUserId);
         }
     }
 
-    private void checkUserExistence() {
-        final String currentUserId = mAuth.getCurrentUser().getUid();
-        myDatabase.addValueEventListener(new ValueEventListener() {
+
+    private void checkUserExistence(final String uID) {
+
+        userDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(currentUserId)) {
+                if (!dataSnapshot.hasChild(uID)) {
                     sendUserToSetupActivity();
-                    Log.d("TAG", "onDataChange:");
                 }
             }
             @Override

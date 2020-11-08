@@ -99,7 +99,6 @@ public class RegisterActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        User user = new User();
                         sendUserToSetupActivity();
                         Log.d(TAG, "Succès");
                         Toast.makeText(RegisterActivity.this, "Votre compte a été créé avec succès.",
@@ -118,7 +117,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void sendUserToSetupActivity() {
         Intent setupIntent = new Intent(RegisterActivity.this, SetupActivity.class);
-        setupIntent.putExtra("userEmail", emailAddress.getText().toString());
         setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(setupIntent);
         finish();

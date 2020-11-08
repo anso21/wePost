@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="profile_size">124dp</dimen>
+    <dimen name="profile_size">150dp</dimen>
     <dimen name="medium_size">8dp</dimen>
     <dimen name="large_size">32dp</dimen>
     <dimen name="medium_16">16dp</dimen>
