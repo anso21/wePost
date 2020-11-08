@@ -106,7 +106,9 @@ public class RegisterActivity extends AppCompatActivity {
                         loadingBar.dismiss();
                     } else {
                         Log.d(TAG, "Erreur de création");
-                        Toast.makeText(RegisterActivity.this, "Votre compte n'a pas pu être créer. Vérifiez votra adresse",
+                        String message = task.getException().getMessage().toString();
+                        Log.d(TAG, "onComplete: Erreur ->" + message);
+                        Toast.makeText(RegisterActivity.this, "Votre compte n'a pas pu être créer. Vérifiez votre adresse",
                                 Toast.LENGTH_SHORT).show();
                         loadingBar.dismiss();
                     }

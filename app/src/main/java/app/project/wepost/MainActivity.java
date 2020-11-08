@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         //innitialisation de l'user
         mAuth = FirebaseAuth.getInstance();
-        currentUserId = mAuth.getUid();
+        Log.d("UserId", "onCreate: " + currentUserId);
 
         //pointage de la table user dans la base de données
         userDatabase = FirebaseDatabase.getInstance().getReference().child("users");
@@ -73,31 +73,7 @@ public class MainActivity extends AppCompatActivity {
         navigationUserFullname = navView.findViewById(R.id.nav_fullname);
 
 
-        //Il faut vérifier dabord si les infos sur l'utilisateur ont été bien enregistrées avant de prendre les valeurs et afficher
 
-        userDatabase.child(currentUserId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    if (dataSnapshot.hasChild("profilePicture")) {
-                        String profileUri = dataSnapshot.child("profilePicture").getValue().toString();
-                        Picasso.get().load(profileUri).placeholder(R.drawable.profile).into(navigationProfileImage);
-                    }
-
-                    if (dataSnapshot.hasChild("fullname")) {
-                        Log.d("TAG", "onDataChange: Chargement du nom");
-                        String fullname = dataSnapshot.child("fullname").getValue().toString();
-                        Log.d("TAG", "onDataChange: Fillname = " + fullname);
-                        navigationUserFullname.setText(fullname);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -118,7 +94,35 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser == null) {
             sendUserToLoginActivity();
         } else {
+            currentUserId = currentUser.getUid().toString();
             checkUserExistence(currentUserId);
+
+            //Il faut vérifier dabord si les infos sur l'utilisateur ont été bien enregistrées avant de prendre les valeurs et afficher
+            userDatabase.child(currentUserId).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+
+                        if (dataSnapshot.hasChild("profilePicture")) {
+                            String profileUri = dataSnapshot.child("profilePicture").getValue().toString();
+                            Picasso.get().load(profileUri).placeholder(R.drawable.profile).into(navigationProfileImage);
+                        }
+
+                        if (dataSnapshot.hasChild("fullname")) {
+                            Log.d("TAG", "onDataChange: Chargement du nom");
+                            String fullname = dataSnapshot.child("fullname").getValue().toString();
+                            Log.d("TAG", "onDataChange: Fillname = " + fullname);
+                            navigationUserFullname.setText(fullname);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
         }
     }
 
