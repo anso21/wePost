@@ -52,7 +52,7 @@ public class SetupActivity extends AppCompatActivity {
 
     private DatabaseReference userDatabase;
     private StorageReference userProfileRef;
-    private  FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
     private String currentUserId;
 
     @Override
