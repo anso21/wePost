@@ -3,21 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="240dp"
     android:background="@color/colorPrimary"
-    android:paddingLeft="24dp">
+    android:paddingLeft="36dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="36dp"
         android:weightSum="2">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
             android:layout_width="@dimen/profile_size"
             android:layout_height="@dimen/profile_size"
+            android:layout_marginTop="@dimen/medium_16"
+            android:layout_marginBottom="@dimen/medium_size"
             android:src="@drawable/profile"
             app:civ_border_color="@color/colorAccent"
             android:layout_weight="1"
@@ -28,7 +29,6 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="@dimen/medium_size"
             android:text="Username"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.Medium"
