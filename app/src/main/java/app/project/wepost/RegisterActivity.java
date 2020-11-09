@@ -30,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     private  EditText password;
     private EditText confirmPassword;
     private Button registerBtn;
-    private ImageView goBackToLogin;
+    private ImageView goBackToLogin ;
 
     private FirebaseAuth mAuth;
     private ProgressDialog loadingBar;
