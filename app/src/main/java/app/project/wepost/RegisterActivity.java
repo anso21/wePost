@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     private  EditText password;
     private EditText confirmPassword;
     private Button registerBtn;
+    private ImageView goBackToLogin;
 
     private FirebaseAuth mAuth;
     private ProgressDialog loadingBar;
@@ -46,6 +48,14 @@ public class RegisterActivity extends AppCompatActivity {
         password = findViewById(R.id.register_password);
         confirmPassword = findViewById(R.id.confirm_password);
         registerBtn = findViewById(R.id.sign_up_btn);
+        goBackToLogin = findViewById(R.id.go_back_btn);
+
+        goBackToLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendUserLoginActivity();
+            }
+        });
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +63,12 @@ public class RegisterActivity extends AppCompatActivity {
                 createNewAccount();
             }
         });
+    }
+
+    private void sendUserLoginActivity() {
+        Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(loginIntent);
     }
 
     @Override

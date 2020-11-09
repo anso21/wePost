@@ -15,16 +15,6 @@
             android:orientation="vertical"
             android:padding="@dimen/medium_size">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/large_size"
-                android:gravity="center_horizontal"
-                android:text="Connection au compte"
-                android:textColor="@color/colorPrimary"
-                android:textSize="24sp"
-                android:textStyle="bold"/>
-
             <ImageView
                 android:layout_marginTop="@dimen/large_size"
                 android:layout_width="match_parent"
@@ -34,25 +24,33 @@
             <EditText
                 android:id="@+id/username"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/input_height"
                 android:baselineAligned="false"
                 android:layout_marginTop="@dimen/large_size"
-                android:drawableStart="@drawable/email"
+                android:drawableStart="@drawable/custume_email_icon"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
-                android:textAppearance="@android:style/TextAppearance.Medium"/>
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:background="@drawable/custum_input_register"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:drawablePadding="12dp"/>
 
             <EditText
                 android:id="@+id/password"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/medium_16"
                 android:layout_marginBottom="@dimen/medium_size"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/input_height"
                 android:baselineAligned="false"
-                android:drawableStart="@drawable/ic_baseline_lock_24"
+                android:drawableStart="@drawable/custume_lock_icon"
                 android:hint="@string/password"
                 android:inputType="textPassword"
-                android:textAppearance="@android:style/TextAppearance.Medium"/>
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:background="@drawable/custum_input_register"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:drawablePadding="12dp"/>
             <Button
                 android:id="@+id/sign_in_btn"
                 android:layout_width="wrap_content"

@@ -12,10 +12,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private RecyclerView postList;
     private Toolbar hToolbar;
+    private FloatingActionButton addNewPost;
 
     private CircleImageView navigationProfileImage;
     private TextView navigationUserFullname;
@@ -55,6 +56,14 @@ public class MainActivity extends AppCompatActivity {
         //pointage de la table user dans la base de données
         userDatabase = FirebaseDatabase.getInstance().getReference().child("users");
 
+        addNewPost = findViewById(R.id.toCreatePostfloatingButton);
+
+        addNewPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendUserToPostActivity();
+            }
+        });
 
         hToolbar = findViewById(R.id.home_toolbar);
         setSupportActionBar(hToolbar);
@@ -153,6 +162,11 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    private void sendUserToPostActivity() {
+        Intent postIntent = new Intent(MainActivity.this, NewPostActivity.class);
+        startActivity(postIntent);
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(actionBarDrawerToggle.onOptionsItemSelected(item)){
@@ -178,18 +192,4 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-
-    /*@Override
-    public void onClick(View v) {
-        int i = v.getId();
-        if(i==R.id.nav_home){
-            Toast.makeText(this, "Aceuil", Toast.LENGTH_SHORT).show();
-        } else if(i== R.id.nav_add_post) {
-            Toast.makeText(this, "Ajouter un nouveau post", Toast.LENGTH_SHORT).show();
-        }else if(i== R.id.nav_profile) {
-            Toast.makeText(this, "Profil", Toast.LENGTH_SHORT).show();
-        }else if(i== R.id.nav_log_out) {
-
-        }
-    }*/
 }
