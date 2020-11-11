@@ -11,4 +11,6 @@
     <string name="new_post_add_img_btn_text">Choisir une photo</string>
     <string name="new_post_pusblish_btn_text">Publier</string>
     <string name="new_post_user_name">username</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

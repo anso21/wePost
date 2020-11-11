@@ -64,6 +64,18 @@
                 android:textAppearance="@android:style/TextAppearance.Large"/>
 
             <TextView
+                android:id="@+id/recover_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:gravity="center"
+                android:paddingTop="@dimen/medium_16"
+                android:text="Mot de passe oublié?"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/goto_register_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -74,6 +86,9 @@
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:textColor="@color/colorPrimary"
                 android:textStyle="bold" />
+
+
+
 
         </LinearLayout>
     </ScrollView>

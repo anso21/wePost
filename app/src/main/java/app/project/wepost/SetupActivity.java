@@ -30,6 +30,8 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.net.URI;
 import java.util.Date;
@@ -124,42 +126,61 @@ public class SetupActivity extends AppCompatActivity {
             //Récupération de l'URI de l'image uploadée
             Uri imageUri = data.getData();
 
-            //définition du chemin de d'accès à l'image
-            final StorageReference filepath = userProfileRef.child(currentUserId + ".jpg");
-
-            //chargement de l'image et surveillance du sauvegarde
-            filepath.putFile(imageUri).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    long progress = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    Log.d(TAG, "onProgress: " + progress +"%");
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                    filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String profileImageUri = uri.toString();
-                            userDatabase.child("profilePicture").setValue(profileImageUri).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
-                                        Toast.makeText(SetupActivity.this, "Profile bien défini", Toast.LENGTH_SHORT).show();
-                                        Log.d(TAG, "onComplete: Saugarde dans la bdd avec succès");
-                                    } else {
-                                        String message = task.getException().getMessage().toString();
-                                        Log.d(TAG, "onComplete: " + message);
-                                    }
-                                }
-                            });
-                            Log.d(TAG, "onSuccess: " + profileImageUri);
-                        }
-                    });
-                }
-            });
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1, 1)
+                    .start(this);
         }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+
+                //définition du chemin de d'accès à l'image
+                final StorageReference filepath = userProfileRef.child(currentUserId + ".jpg");
+
+                //chargement de l'image et surveillance du sauvegarde
+                filepath.putFile(resultUri)
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                long progress = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                                Log.d(TAG, "onProgress: " + progress +"%");
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                String profileImageUri = uri.toString();
+                                userDatabase.child("profilePicture").setValue(profileImageUri).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()){
+                                            Toast.makeText(SetupActivity.this, "Profile bien défini", Toast.LENGTH_SHORT).show();
+                                            Log.d(TAG, "onComplete: Saugarde dans la bdd avec succès");
+                                        } else {
+                                            String message = task.getException().getMessage().toString();
+                                            Log.d(TAG, "onComplete: " + message);
+                                        }
+                                    }
+                                });
+                                Log.d(TAG, "onSuccess: " + profileImageUri);
+                            }
+                        });
+                    }
+                });
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                Log.d(TAG, "onActivityResult: Erreur => " + error);
+            }
+        }
+
     }
 
     private void saveSetupInformations() {

@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/medium_16"
             android:layout_marginRight="@dimen/medium_16"
-            android:drawableStart="@drawable/ic_profile"
+            android:drawableStart="@drawable/ic_profile_for_setup"
             android:hint="@string/fullname"
             android:inputType="textPersonName"
             android:paddingTop="@dimen/large_size"/>

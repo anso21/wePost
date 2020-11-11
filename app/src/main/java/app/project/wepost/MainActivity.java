@@ -5,7 +5,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,9 +13,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import app.project.wepost.ui.HomeFragment;
+import app.project.wepost.ui.NotificationFragment;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,9 +34,29 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private RecyclerView postList;
+    BottomNavigationView.OnNavigationItemSelectedListener navListiner = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment selectedFragment = null;
+
+            switch (item.getItemId()) {
+                case R.id.bottom_home:
+                    selectedFragment = new HomeFragment();
+                    break;
+                case R.id.bottom_notification:
+                    selectedFragment = new NotificationFragment();
+                    break;
+            }
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, selectedFragment)
+                    .commit();
+            return true;
+        }
+    };
     private Toolbar hToolbar;
-    private FloatingActionButton addNewPost;
+
 
     private CircleImageView navigationProfileImage;
     private TextView navigationUserFullname;
@@ -43,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private  FirebaseAuth mAuth;
     private  String currentUserId;
     private DatabaseReference userDatabase;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +78,20 @@ public class MainActivity extends AppCompatActivity {
         //pointage de la table user dans la base de données
         userDatabase = FirebaseDatabase.getInstance().getReference().child("users");
 
-        addNewPost = findViewById(R.id.toCreatePostfloatingButton);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navListiner);
 
-        addNewPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendUserToPostActivity();
-            }
-        });
+        if (savedInstanceState == null) {
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new HomeFragment())
+                    .commit();
+        }
 
         hToolbar = findViewById(R.id.home_toolbar);
         setSupportActionBar(hToolbar);
-        getSupportActionBar().setTitle("Accueil");
+        getSupportActionBar().setTitle("wePost");
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawable_view);
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
@@ -89,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
     @Override
@@ -162,10 +187,12 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    private void sendUserToPostActivity() {
-        Intent postIntent = new Intent(MainActivity.this, NewPostActivity.class);
-        startActivity(postIntent);
+    private void selfIntent() {
+        Intent intent = new Intent(MainActivity.this,MainActivity.class);
+        startActivity(intent);
+        finish();
     }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -178,13 +205,13 @@ public class MainActivity extends AppCompatActivity {
     private void UserMenuSelector(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home :
-                Toast.makeText(this, "Acceuil", Toast.LENGTH_SHORT).show();
+                selfIntent();
                 break;
             case R.id.nav_profile :
-                Toast.makeText(this, "Profil", Toast.LENGTH_SHORT).show();
+                sendUserToEditActivity();
                 break;
             case R.id.nav_add_post :
-                Toast.makeText(this, "Ajouter une publicatioin", Toast.LENGTH_SHORT).show();
+                sendUserToPostActivity();
                 break;
             case R.id.nav_log_out :
                 mAuth.signOut();
@@ -192,4 +219,16 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    private void sendUserToEditActivity() {
+        Intent postIntent = new Intent(MainActivity.this, EditProfileActivity.class);
+        startActivity(postIntent);
+    }
+
+    private void sendUserToPostActivity() {
+        Intent postIntent = new Intent(MainActivity.this, NewPostActivity.class);
+        startActivity(postIntent);
+    }
+
+
 }

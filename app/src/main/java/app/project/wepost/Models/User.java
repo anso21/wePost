@@ -11,6 +11,12 @@ public class User {
     private String profilePicture;
     private String createdAt;
 
+    public String updateAt;
+
+    public User() {
+
+    }
+
     public User(String uId, String username, String fullName, String email){
         this.id = uId;
         this.username = username;
@@ -29,6 +35,14 @@ public class User {
         userMap.put("createdAt", createdAt);
 
         return userMap;
+    }
+
+    public String getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(String updateAt) {
+        this.updateAt = updateAt;
     }
 
     public String getFullName() {
