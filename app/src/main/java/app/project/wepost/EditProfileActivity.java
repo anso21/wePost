@@ -1,20 +1,22 @@
 package app.project.wepost;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,22 +45,32 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
     private final String TAG = "Update profile";
-    private ImageView gobackBtn;
     private CircleImageView profileImage;
     private EditText username;
     private EditText fullname;
     private Button saveBtn;
+
+
     private String currentUserId;
     private DatabaseReference userDb;
     private StorageReference userProfileRef;
     private FirebaseAuth  mAuth;
 
     private ProgressDialog loadingBar;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
+
+        //Toolbar personnalisation
+        toolbar = findViewById(R.id.edit_profile_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Editer profil");
+
 
         loadingBar = new ProgressDialog(this);
 
@@ -76,14 +88,20 @@ public class EditProfileActivity extends AppCompatActivity {
         userDb.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String uname = dataSnapshot.child("username").getValue().toString();
-                String fname = dataSnapshot.child("fullname").getValue().toString();
-                String pImage = dataSnapshot.child("profilePicture").getValue().toString();
-
-                //On charge les valeurs par défaut des EditText avec les valeurs dans la bd
-                username.setText(uname);
-                fullname.setText(fname);
-                Picasso.get().load(pImage).placeholder(R.drawable.profile).into(profileImage);
+                if (dataSnapshot.hasChild("username") && dataSnapshot.hasChild("fullname")) {
+                    //Récupération des données
+                    String uname = dataSnapshot.child("username").getValue().toString();
+                    String fname = dataSnapshot.child("fullname").getValue().toString();
+                    //On charge les valeurs par défaut des EditText avec les valeurs dans la bd
+                    username.setText(uname);
+                    fullname.setText(fname);
+                }
+                if (dataSnapshot.hasChild("profilePicture")) {
+                    //Récupération du line
+                    String pImage = dataSnapshot.child("profilePicture").getValue().toString();
+                    //chargement de l'image
+                    Picasso.get().load(pImage).placeholder(R.drawable.profile).into(profileImage);
+                }
             }
 
             @Override
@@ -92,21 +110,12 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
-
-        gobackBtn = findViewById(R.id.go_back_btn);
-        gobackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendUserToMainActivity();
-            }
-        });
-
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, 1);
             }
         });
 
@@ -116,13 +125,26 @@ public class EditProfileActivity extends AppCompatActivity {
                 updapteUserInformation();
             }
         });
+
     }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            sendUserToMainActivity();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 0 && resultCode == RESULT_OK && data != null ) {
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null ) {
             //Récupération de l'URI de l'image uploadée
             Uri imageUri = data.getData();
 
@@ -186,7 +208,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void updapteUserInformation() {
         loadingBar.setMessage("Mise à jour du profil en cours");
-        loadingBar.setCanceledOnTouchOutside(false);
+        loadingBar.setCanceledOnTouchOutside(true);
         loadingBar.show();
         String uname = username.getText().toString();
         String fname = fullname.getText().toString();

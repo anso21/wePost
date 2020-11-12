@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +33,6 @@ import java.util.Calendar;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NewPostActivity extends AppCompatActivity implements View.OnClickListener {
-    private ImageButton goBackBtn;
     private CircleImageView userNewPostImg;
     private TextView newPostUserName;
     private EditText newCreatedPostContent;
@@ -43,6 +44,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     private String newPostContent;
 
     private ProgressDialog loadingBar;
+    private Toolbar toolbar;
 
     private StorageReference postsImagesReference;
     private DatabaseReference userPostContentDataBase;
@@ -58,13 +60,17 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
+        toolbar = findViewById(R.id.post_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Ajouter une publication");
+
         loadingBar = new ProgressDialog(this);
         postsImagesReference = FirebaseStorage.getInstance().getReference();
         userPostContentDataBase = FirebaseDatabase.getInstance().getReference().child("PostContent");
 
         //Récupération des éléments du formulaire de création de post NewPost
-        goBackBtn = findViewById(R.id.go_back_btn);
-        goBackBtn.setOnClickListener(this);
 
         newCreatedPostContent = findViewById(R.id.new_created_post_content);
 
@@ -76,6 +82,15 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         newPostAddImgBtn.setOnClickListener(this);
         newPostImgAdded = findViewById(R.id.new_post_img_added);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            sendUserToMainActivity();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     //Méthode pour pouvoir aller à la page d'acueil
@@ -162,12 +177,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-
-            case R.id.go_back_btn:
-                Toast.makeText(this, "Aller à l'accueil", Toast.LENGTH_SHORT).show();
-                sendUserToMainActivity();
-                break;
-
             case R.id.new_post_add_img_btn:
                 OpenGallery();//Accès à la gallerie de l'utilisateur afin qu'il puisse choir la photo à publier
                 Toast.makeText(this, "Choisir une image !", Toast.LENGTH_SHORT).show();

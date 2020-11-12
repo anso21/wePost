@@ -99,7 +99,7 @@ public class SetupActivity extends AppCompatActivity {
                         //récupération du lien du profile
                         String image = dataSnapshot.child("profilePicture").getValue().toString();
                         //displaying de l'image
-                        Picasso.get().load(image).placeholder(R.drawable.profile).into(profileImage);;
+                        Picasso.get().load(image).placeholder(R.drawable.profile).into(profileImage);
                     }
                 }
             }
@@ -190,7 +190,7 @@ public class SetupActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(uName)) {
             Toast.makeText(SetupActivity.this, "Définissez un pseudo", Toast.LENGTH_SHORT).show();
-        } if (TextUtils.isEmpty(uFullname)) {
+        }else if (TextUtils.isEmpty(uFullname)) {
             Toast.makeText(SetupActivity.this, "Votre nom complet s'il vout plait", Toast.LENGTH_SHORT).show();
         } else {
             writeNewUser(uName, uFullname , email);
@@ -199,8 +199,7 @@ public class SetupActivity extends AppCompatActivity {
 
     private void writeNewUser(String name, String fullname, String email) {
 
-        loadingBar.setTitle("Sauvegarde en cours...");
-        loadingBar.setMessage("Patientez un instant");
+        loadingBar.setMessage("Sauvegarde en cours...");
         loadingBar.show();
         loadingBar.setCanceledOnTouchOutside(true);
 

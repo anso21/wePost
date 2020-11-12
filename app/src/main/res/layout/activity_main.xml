@@ -43,5 +43,13 @@
         android:layout_gravity="start"
         android:layout_marginBottom="3dp"
         app:menu="@menu/my_navigation_items">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_margin="@dimen/medium_size"
+            android:gravity="center"
+            android:text="© Copyright 2020"
+            android:textAppearance="@android:style/TextAppearance.Small"/>
     </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

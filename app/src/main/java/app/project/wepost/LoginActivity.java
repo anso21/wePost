@@ -27,7 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "Connexion au compte";
+    private static final String TAG = "Login";
     private EditText username;
     private  EditText password;
     private TextView registerLink;
@@ -113,8 +113,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void sendResetEmail(String emailAdress) {
-        loadingBar.setMessage("Envoie du mailde réinitialisation en cours...");
-        loadingBar.setCanceledOnTouchOutside(false);
+        loadingBar.setMessage("Envoie du mail de réinitialisation en cours...");
+        loadingBar.setCanceledOnTouchOutside(true);
         loadingBar.show();
         mAuth.sendPasswordResetEmail(emailAdress).addOnCompleteListener(new OnCompleteListener<Void>() {
             @SuppressLint("LongLogTag")
@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                    loadingBar.dismiss();
-                   Toast.makeText(LoginActivity.this, "Email de réinitialisation envoyé", Toast.LENGTH_SHORT).show();
+                   Toast.makeText(LoginActivity.this, "Email envoyé, consultez votre boite de messagerie", Toast.LENGTH_SHORT).show();
 
                 } else {
                     final String message = task.getException().getMessage().toString();
@@ -163,9 +163,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(this, "L'email est obligatoire", Toast.LENGTH_SHORT).show();
         } else if (TextUtils.isEmpty(uPassword)) {
             Toast.makeText(this, "Votre mot de passe s'il vous plait", Toast.LENGTH_SHORT).show();
-        } else {
-            loadingBar.setTitle("Connection en cours...");
-            loadingBar.setMessage("Vous allez être dirigé vers la page d'acceuil.");
+        }  else {
+            loadingBar.setMessage("Connection en cours...");
             loadingBar.show();
             loadingBar.setCanceledOnTouchOutside(true);
 
@@ -179,9 +178,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 Toast.LENGTH_SHORT).show();
                         loadingBar.dismiss();
                     }  else {
-                        Log.d(TAG, "Erreur de connexion");
-                        Toast.makeText(LoginActivity.this, "Connection échouée",
+                        String message = task.getException().getMessage().toString();
+                        Toast.makeText(LoginActivity.this, message,
                                 Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Erreur => " + message);
                         loadingBar.dismiss();
                     }
                 }

@@ -7,12 +7,19 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -34,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+
+
+    private Toolbar hToolbar;
+
+
+    private CircleImageView navigationProfileImage;
     BottomNavigationView.OnNavigationItemSelectedListener navListiner = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -55,16 +68,13 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
-    private Toolbar hToolbar;
-
-
-    private CircleImageView navigationProfileImage;
     private TextView navigationUserFullname;
 
     private  FirebaseAuth mAuth;
     private  String currentUserId;
     private DatabaseReference userDatabase;
     private BottomNavigationView bottomNavigationView;
+    private String profileUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +115,13 @@ public class MainActivity extends AppCompatActivity {
         navigationProfileImage = navView.findViewById(R.id.profile_image);
         navigationUserFullname = navView.findViewById(R.id.nav_fullname);
 
+        navigationProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProfileImageOnDialog();
+            }
+        });
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -114,56 +131,92 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-
     @Override
     protected void onStart() {
         super.onStart();
-
         //récupération de l'user courant
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser == null) {
             sendUserToLoginActivity();
         } else {
-            currentUserId = currentUser.getUid().toString();
+            currentUserId = currentUser.getUid();
             checkUserExistence(currentUserId);
+            displayUserImageAndHisName(currentUserId);
+        }
+    }
 
-            //Il faut vérifier dabord si les infos sur l'utilisateur ont été bien enregistrées avant de prendre les valeurs et afficher
-            userDatabase.child(currentUserId).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-                        if (dataSnapshot.hasChild("profilePicture")) {
-                            String profileUri = dataSnapshot.child("profilePicture").getValue().toString();
-                            Picasso.get().load(profileUri).placeholder(R.drawable.profile).into(navigationProfileImage);
-                        }
+    private void UserMenuSelector(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_home :
+                selfIntent();
+                break;
+            case R.id.nav_profile :
+                sendUserToEditActivity();
+                break;
+            case R.id.nav_add_post :
+                sendUserToPostActivity();
+                break;
+            case R.id.nav_log_out :
+                mAuth.signOut();
+                sendUserToLoginActivity();
+                break;
+        }
+    }
 
-                        if (dataSnapshot.hasChild("fullname")) {
-                            Log.d("TAG", "onDataChange: Chargement du nom");
-                            String fullname = dataSnapshot.child("fullname").getValue().toString();
-                            Log.d("TAG", "onDataChange: Fillname = " + fullname);
-                            navigationUserFullname.setText(fullname);
-                        }
+
+    //Fonctions utilisées
+    private void displayUserImageAndHisName(String uID) {
+        //Il faut vérifier dabord si les infos sur l'utilisateur ont été bien enregistrées avant de prendre les valeurs et afficher
+        userDatabase.child(uID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+
+                    if (dataSnapshot.hasChild("profilePicture")) {
+                        profileUri = dataSnapshot.child("profilePicture").getValue().toString();
+                        Picasso.get().load(profileUri).placeholder(R.drawable.profile).into(navigationProfileImage);
+                    }
+
+                    if (dataSnapshot.hasChild("fullname")) {
+                        String fullname = dataSnapshot.child("fullname").getValue().toString();
+                        navigationUserFullname.setText(fullname);
                     }
                 }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
+            }
+        });
+    }
 
+    private void showProfileImageOnDialog() {
+        if (profileUri != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            ImageView imageView =new ImageView(this);
+            Picasso.get().load(profileUri).into(imageView);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            builder.setView(imageView);
+            builder.create().show();
         }
     }
 
     private void checkUserExistence(final String uID) {
 
-        userDatabase.addValueEventListener(new ValueEventListener() {
+        userDatabase.child(uID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.hasChild(uID)) {
+                if (!dataSnapshot.hasChild("fullname")) {
                     sendUserToSetupActivity();
                 }
             }
@@ -191,33 +244,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this,MainActivity.class);
         startActivity(intent);
         finish();
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(actionBarDrawerToggle.onOptionsItemSelected(item)){
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void UserMenuSelector(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.nav_home :
-                selfIntent();
-                break;
-            case R.id.nav_profile :
-                sendUserToEditActivity();
-                break;
-            case R.id.nav_add_post :
-                sendUserToPostActivity();
-                break;
-            case R.id.nav_log_out :
-                mAuth.signOut();
-                sendUserToLoginActivity();
-                break;
-        }
     }
 
     private void sendUserToEditActivity() {

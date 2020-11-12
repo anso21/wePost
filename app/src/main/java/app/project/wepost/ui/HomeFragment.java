@@ -5,11 +5,13 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -76,6 +78,8 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Acceuil");
+
         addNewPost = view.findViewById(R.id.toCreatePostfloatingButton);
 
         addNewPost.setOnClickListener(new View.OnClickListener() {
@@ -84,12 +88,12 @@ public class HomeFragment extends Fragment {
                 sendUserToPostActivity();
             }
 
-            private void sendUserToPostActivity() {
-                Intent postIntent = new Intent(view.getContext(), NewPostActivity.class);
-                startActivity(postIntent);
-            }
+
         });
     }
 
-
+    private void sendUserToPostActivity() {
+        Intent postIntent = new Intent(this.getContext(), NewPostActivity.class);
+        startActivity(postIntent);
+    }
 }

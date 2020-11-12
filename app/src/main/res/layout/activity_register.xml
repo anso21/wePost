@@ -11,36 +11,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:background="@color/colorPrimary"
-        android:orientation="horizontal"
-        android:layout_gravity="center_vertical">
-
-        <ImageButton
-            android:id="@+id/go_back_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_back"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="8dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:backgroundTint="@color/colorPrimary"
-            android:clickable="true"
-            android:focusable="true"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Créer un compte"
-            android:textColor="#FFF"
-            android:textAppearance="@android:style/TextAppearance.Medium"
-            android:layout_gravity="center_vertical"
-            android:paddingStart="@dimen/medium_16"
-            android:textStyle="bold"/>
-
-    </LinearLayout>
+    <include
+        android:id="@+id/register_toolbar"
+        layout="@layout/toolbar"/>
 
     <ScrollView
         android:layout_width="match_parent"
