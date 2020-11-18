@@ -11,11 +11,13 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.appcompat.widget.Toolbar;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
-import app.project.wepost.MainActivity;
 import app.project.wepost.NewPostActivity;
 import app.project.wepost.R;
 
@@ -35,9 +37,15 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public HomeFragment() {
+    private View view;
+    private RecyclerView postsList;
+    private DatabaseReference postsRef;
+    private FirebaseAuth mAuth;
+    private  String currentUserId;
+
+   // public HomeFragment() {
         // Required empty public constructor
-    }
+    //}
 
     /**
      * Use this factory method to create a new instance of
@@ -60,6 +68,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -69,8 +78,10 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        view = inflater.inflate(R.layout.fragment_home, container, false);
+        return view;
     }
 
 
@@ -81,14 +92,11 @@ public class HomeFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Acceuil");
 
         addNewPost = view.findViewById(R.id.toCreatePostfloatingButton);
-
         addNewPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendUserToPostActivity();
             }
-
-
         });
     }
 

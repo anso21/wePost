@@ -1,29 +1,60 @@
 package app.project.wepost.Models;
 
+import java.util.HashMap;
+
 public class Posts {
 
-    private int id;
-    private int userId;
+    private String postid;
+    private String userId;
     private String body;
-    private String picture;
-    private String video;
-    private String addAt;
-    private String updateAt;
+    private String postImage;
+    private String updatedAt;
+    private String createdDate;
+    private String createdTime;
     private Boolean viewed;
 
-    public int getId() {
-        return this.id;
+    public Posts() {
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Posts(String postid,String userId, String body, String createdDate, String createdTime) {
+        this.postid = postid;
+        this.userId = userId;
+        this.body = body;
+        this.createdDate = createdDate;
+        this.createdTime = createdTime;
     }
 
-    public int getUserId() {
+    public HashMap postsMap(){
+        HashMap postsMap = new HashMap();
+        postsMap.put("userId",userId);
+        postsMap.put("userId",userId);
+        postsMap.put("body",body);
+        postsMap.put("createdDate",createdDate);
+        postsMap.put("createdTime",createdTime);
+        return postsMap;
+    }
+
+    public String getcreatedDate() {
+        return createdDate;
+    }
+
+    public void setcreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getcreatedTime() {
+        return createdTime;
+    }
+
+    public void setcreatedTime(String createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getUserId() {
         return this.userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -35,36 +66,20 @@ public class Posts {
         this.body = body;
     }
 
-    public String getPicture() {
-        return this.picture;
+    public String getPostImage() {
+        return postImage;
     }
 
-    public void setPicture(String picture) {
-        this.picture = picture;
+    public void setPostImage(String postImage) {
+        this.postImage = postImage;
     }
 
-    public String getVideo() {
-        return this.video;
+    public String getupdatedAt() {
+        return this.updatedAt;
     }
 
-    public void setVideo(String video) {
-        this.video = video;
-    }
-
-    public String getAddAt() {
-        return this.addAt;
-    }
-
-    public void setAddAt(String addAt) {
-        this.addAt = addAt;
-    }
-
-    public String getUpdateAt() {
-        return this.updateAt;
-    }
-
-    public void setUpdateAt(String updateAt) {
-        this.updateAt = updateAt;
+    public void setupdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Boolean isViewed() {
@@ -75,4 +90,11 @@ public class Posts {
         this.viewed = viewed;
     }
 
+    public String getPostid() {
+        return postid;
+    }
+
+    public void setPostid(String postid) {
+        this.postid = postid;
+    }
 }

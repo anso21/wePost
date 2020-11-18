@@ -81,14 +81,6 @@ public class SetupActivity extends AppCompatActivity {
 
         loadingBar = new ProgressDialog(this);
 
-        profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 0);
-            }
-        });
 
         //ecoute de la base de données
         userDatabase.addValueEventListener(new ValueEventListener() {
@@ -114,6 +106,14 @@ public class SetupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 saveSetupInformations();
+            }
+        });
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 0);
             }
         });
     }
@@ -180,7 +180,6 @@ public class SetupActivity extends AppCompatActivity {
                 Log.d(TAG, "onActivityResult: Erreur => " + error);
             }
         }
-
     }
 
     private void saveSetupInformations() {

@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -19,41 +21,45 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
+import app.project.wepost.Models.Posts;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class NewPostActivity extends AppCompatActivity implements View.OnClickListener {
-    private CircleImageView userNewPostImg;
-    private TextView newPostUserName;
-    private EditText newCreatedPostContent;
-    private TextView newPostAddImgBtn;
-    private Button publishNewCreatedPost;
+public class NewPostActivity extends AppCompatActivity {
+
     private static final int Gallery_Pick = 1;
+
+    private EditText postContent;
+    private TextView addImage;
+    private ImageView uploadedImage;
+    private Button publishPostBtn;
+
     private Uri imageUri;
-    private ImageView newPostImgAdded;
     private String newPostContent;
+    private String currentUserId;
+    private String postId;
 
     private ProgressDialog loadingBar;
     private Toolbar toolbar;
 
     private StorageReference postsImagesReference;
-    private DatabaseReference userPostContentDataBase;
+    private DatabaseReference userPostContentDatabase;
     private FirebaseAuth mAuth;
 
-    private String userId,saveCurrentDate,saveCurrentTime,postRandomName, postImageSavedUrl;
-
-    public NewPostActivity() {
-    }
+    private String saveCurrentDate,saveCurrentTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,21 +73,33 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         getSupportActionBar().setTitle("Ajouter une publication");
 
         loadingBar = new ProgressDialog(this);
-        postsImagesReference = FirebaseStorage.getInstance().getReference();
-        userPostContentDataBase = FirebaseDatabase.getInstance().getReference().child("PostContent");
+
+
+        mAuth = FirebaseAuth.getInstance();
+        currentUserId = mAuth.getCurrentUser().getUid();
+        postsImagesReference = FirebaseStorage.getInstance().getReference().child("Posts images");
+        userPostContentDatabase = FirebaseDatabase.getInstance().getReference().child("Posts");
 
         //Récupération des éléments du formulaire de création de post NewPost
 
-        newCreatedPostContent = findViewById(R.id.new_created_post_content);
+        postContent = findViewById(R.id.post_content);
 
-        publishNewCreatedPost = findViewById(R.id.publish_new_post_btn);
-        publishNewCreatedPost.setOnClickListener(this);
+        publishPostBtn = findViewById(R.id.publish_post_btn);
+        publishPostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validateNewPostContent();
+            }
+        });
 
-        newPostUserName = findViewById(R.id.new_post_user_name);
-        newPostAddImgBtn = findViewById(R.id.new_post_add_img_btn);
-        newPostAddImgBtn.setOnClickListener(this);
-        newPostImgAdded = findViewById(R.id.new_post_img_added);
-
+        addImage = findViewById(R.id.add_image);
+        addImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OpenGallery();
+            }
+        });
+        uploadedImage = findViewById(R.id.img_uploaded);
     }
 
     @Override
@@ -103,9 +121,8 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
 
     //Methode pour accéder à la galerie de l'utilisateur afin qu'il puisse choisir une photo à publier
     public void OpenGallery() {
-        Intent goToGalleryIntent = new Intent();
-        goToGalleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-        goToGalleryIntent.setType("image/*");
+        Intent goToGalleryIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(goToGalleryIntent, Gallery_Pick);
     }
 
@@ -115,76 +132,83 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Gallery_Pick && resultCode == RESULT_OK && data != null){
             imageUri = data.getData();
-            newPostImgAdded.setImageURI(imageUri);
+            uploadedImage.setImageURI(imageUri);
+            uploadedImage.setVisibility(View.VISIBLE);
         }
     }
 
     //Méthode pour vérifier s'il y a au mmoins quelque à publier
     private void validateNewPostContent(){
-        newPostContent = newCreatedPostContent.getText().toString();
-        if(newPostContent.isEmpty() && imageUri == null){
+        newPostContent = postContent.getText().toString().trim();
+        if (TextUtils.isEmpty(newPostContent) && imageUri == null) {
             Toast.makeText(this, "Choisissez quelque chose à publier!", Toast.LENGTH_SHORT).show();
-        }
-        if (!newPostContent.isEmpty()){
-            saveNewPostContent();
-        }
-        if (imageUri != null){
-            saveNewPostContent();
+        } else {
+            Calendar forCurentDate = Calendar.getInstance();
+            SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
+            saveCurrentDate = currentDate.format(forCurentDate.getTime());
+
+            Calendar forCurentTime = Calendar.getInstance();
+            SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
+            saveCurrentTime = currentTime.format(forCurentTime.getTime());
+            postId = currentUserId + "-" + saveCurrentDate;
+
+            if (imageUri != null){
+                savePostImageIntoStorage(imageUri,postId);
+            }
+            if (!TextUtils.isEmpty(newPostContent)) {
+
+                savePostIntoPostRef(postId,currentUserId,newPostContent,saveCurrentDate, saveCurrentTime);
+            }
+            Toast.makeText(NewPostActivity.this,"Publication réussie",Toast.LENGTH_SHORT).show();
+            sendUserToMainActivity();
         }
     }
 
-    //Méthode pour récupérer le contenu du nouveau post et le sauvegarder dans la base de données
-    //TODO sauvegarder le contenu textuel du post
-    public void saveNewPostContent(){
-        loadingBar.setTitle("En cours de publication...");
-        loadingBar.setMessage("Veuillez patientez !");
-        loadingBar.show();
-        loadingBar.setCanceledOnTouchOutside(true);
-
-        Calendar forCurentDate = Calendar.getInstance();
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
-        saveCurrentDate = currentDate.format(forCurentDate.getTime());
-
-        Calendar forCurentTime = Calendar.getInstance();
-        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
-        saveCurrentTime = currentTime.format(forCurentTime.getTime());
-
-        postRandomName = saveCurrentDate + "-" + saveCurrentTime;
-
-        StorageReference imagePath = postsImagesReference.child("Posts_Images").child(imageUri.getLastPathSegment() + "-" + postRandomName + ".jpg");
-
-        imagePath.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+    private void savePostIntoPostRef(String postid,String userId, String body,String createdDate, String createdTime) {
+        Posts post = new Posts(postid,userId, body, createdDate,createdTime);
+        HashMap postMap = post.postsMap();
+        userPostContentDatabase.child(currentUserId).child(postid).updateChildren(postMap).addOnCompleteListener(this, new OnCompleteListener() {
             @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(NewPostActivity.this,"Image enregistré avec succès!",Toast.LENGTH_SHORT).show();
-                    savePostInformationToDataBase();
-                    loadingBar.dismiss();
-                    sendUserToMainActivity();
-                }
-                else {
+            public void onComplete(@NonNull Task task) {
+               if (!task.isSuccessful()){
                     String message = task.getException().getMessage();
-                    Toast.makeText(NewPostActivity.this,"Error occured:" + message,Toast.LENGTH_SHORT).show();
-                    loadingBar.dismiss();
+                    Log.d("PostTag", "onComplete: Post => " + message);
                 }
             }
         });
     }
 
-    private void savePostInformationToDataBase() {
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.new_post_add_img_btn:
-                OpenGallery();//Accès à la gallerie de l'utilisateur afin qu'il puisse choir la photo à publier
-                Toast.makeText(this, "Choisir une image !", Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.publish_new_post_btn:
-                validateNewPostContent();
-                break;
-        }
+    private void savePostImageIntoStorage(Uri imageUri, final String postId) {
+        final StorageReference imagePath = postsImagesReference.child(postId +".jpg");
+        imagePath.putFile(imageUri)
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                long progress = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                Log.d("Image Download", "onProgress: " + progress +"%");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                imagePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String postImageUri = uri.toString();
+                        userPostContentDatabase.child(currentUserId).child(postId).child("postImage").setValue(postImageUri).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("Saving ImageUri", "onComplete: Success");
+                                } else {
+                                    String message = task.getException().getMessage().toString();
+                                    Log.d("Error", "onComplete: " + message);
+                                }
+                            }
+                        });
+                        Log.d("image uri", "onSuccess: " + postImageUri);
+                    }
+                });
+            }
+        });
     }
 }
