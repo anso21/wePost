@@ -12,12 +12,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
+import app.project.wepost.Adapter.MyPostAdatper;
+import app.project.wepost.Models.Posts;
 import app.project.wepost.NewPostActivity;
 import app.project.wepost.R;
 
@@ -42,6 +48,7 @@ public class HomeFragment extends Fragment {
     private DatabaseReference postsRef;
     private FirebaseAuth mAuth;
     private  String currentUserId;
+    private MyPostAdatper adapter;
 
    // public HomeFragment() {
         // Required empty public constructor
@@ -81,7 +88,31 @@ public class HomeFragment extends Fragment {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_home, container, false);
+
+
+        postsList = view.findViewById(R.id.posts_list);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        postsList.setLayoutManager(linearLayoutManager);
+        postsList.setHasFixedSize(true);
+
+        mAuth = FirebaseAuth.getInstance();
+        postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
+        settUpRecycleView();
+
         return view;
+
+    }
+
+    private void settUpRecycleView() {
+        FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>()
+                .setQuery(postsRef, Posts.class)
+                .build();
+
+        adapter = new MyPostAdatper(options);
+        postsList.setAdapter(adapter);
+
     }
 
 
@@ -103,5 +134,23 @@ public class HomeFragment extends Fragment {
     private void sendUserToPostActivity() {
         Intent postIntent = new Intent(this.getContext(), NewPostActivity.class);
         startActivity(postIntent);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (adapter != null) {
+            adapter.startListening();
+        }
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (adapter != null) {
+            adapter.stopListening();
+        }
+
     }
 }

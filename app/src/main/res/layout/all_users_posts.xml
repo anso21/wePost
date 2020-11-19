@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.NotificationFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/medium_size"
+        android:layout_margin="4dp"
+        android:background="@drawable/custum_input"
         android:orientation="vertical">
 
         <LinearLayout
@@ -28,8 +29,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile"
                 app:civ_border_color="@color/colorAccent"
-                app:civ_border_width="3dp" />
-
+                app:civ_border_width="1dp" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                         android:id="@+id/text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="a publié ce post à "/>
+                        android:text="Public  "/>
 
                     <TextView
                         android:id="@+id/post_date"
@@ -88,7 +88,8 @@
             android:layout_marginStart="@dimen/medium_size"
             android:layout_marginEnd="@dimen/medium_size"
             android:layout_marginBottom="@dimen/medium_size"
-            android:padding="@dimen/medium_size"/>
+            android:padding="@dimen/medium_size"
+            />
 
         <ImageView
             android:id="@+id/post_image"
@@ -98,13 +99,14 @@
             android:layout_marginEnd="@dimen/medium_size"
             android:layout_marginBottom="@dimen/medium_size"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            />
+            android:scaleType="fitCenter"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:padding="@dimen/medium_size"
             android:weightSum="2">
 
             <TextView
@@ -113,7 +115,8 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="J'aimes"
+                android:text="J'aime"
+                android:textColor="#000"
                 android:drawableStart="@drawable/ic_baseline_thumb_up_24"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -125,14 +128,14 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:focusable="true"
+                android:gravity="center"
                 android:text="Partager"
                 android:drawableStart="@drawable/ic_baseline_share_24"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
+                android:textColor="#000"
                 android:padding="@dimen/medium_size"/>
-
         </LinearLayout>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</RelativeLayout>

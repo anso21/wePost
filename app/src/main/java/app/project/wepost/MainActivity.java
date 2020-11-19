@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Fragment selectedFragment = null;
-
             switch (item.getItemId()) {
                 case R.id.bottom_home:
                     selectedFragment = new HomeFragment();
@@ -205,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             ImageView imageView =new ImageView(this);
             Picasso.get().load(profileUri).into(imageView);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             builder.setView(imageView);
             builder.create().show();
         }

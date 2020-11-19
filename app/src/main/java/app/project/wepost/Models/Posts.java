@@ -12,26 +12,54 @@ public class Posts {
     private String createdDate;
     private String createdTime;
     private Boolean viewed;
+    private String authorName;
+    private String authorProfile;
 
     public Posts() {
     }
 
-    public Posts(String postid,String userId, String body, String createdDate, String createdTime) {
+    public Posts(String postid,String userId, String authorName, String authorProfile, String body, String postImage, String createdDate, String createdTime) {
         this.postid = postid;
         this.userId = userId;
+        this.authorName = authorName;
+        this.authorProfile = authorProfile;
         this.body = body;
+        this.postImage = postImage;
         this.createdDate = createdDate;
         this.createdTime = createdTime;
     }
 
-    public HashMap postsMap(){
-        HashMap postsMap = new HashMap();
-        postsMap.put("userId",userId);
-        postsMap.put("userId",userId);
-        postsMap.put("body",body);
-        postsMap.put("createdDate",createdDate);
-        postsMap.put("createdTime",createdTime);
-        return postsMap;
+    public HashMap textPostsMap(){
+        HashMap textPostsMap = new HashMap();
+        textPostsMap.put("userId",userId);
+        textPostsMap.put("body",body);
+        textPostsMap.put("authorName",authorName);
+        textPostsMap.put("authorProfile",authorProfile);
+        textPostsMap.put("createdDate",createdDate);
+        textPostsMap.put("createdTime",createdTime);
+        return textPostsMap;
+    }
+
+    public HashMap imagePostsMap(){
+        HashMap imagePostsMap = new HashMap();
+        imagePostsMap.put("userId",userId);
+        imagePostsMap.put("postImage",postImage);
+        imagePostsMap.put("authorName",authorName);
+        imagePostsMap.put("authorProfile",authorProfile);
+        imagePostsMap.put("createdDate",createdDate);
+        imagePostsMap.put("createdTime",createdTime);
+        return imagePostsMap;
+    }
+    public HashMap fullPostsMap(){
+        HashMap fullPostsMap = new HashMap();
+        fullPostsMap.put("userId",userId);
+        fullPostsMap.put("body",body);
+        fullPostsMap.put("postImage",postImage);
+        fullPostsMap.put("authorName",authorName);
+        fullPostsMap.put("authorProfile",authorProfile);
+        fullPostsMap.put("createdDate",createdDate);
+        fullPostsMap.put("createdTime",createdTime);
+        return fullPostsMap;
     }
 
     public String getcreatedDate() {
@@ -96,5 +124,21 @@ public class Posts {
 
     public void setPostid(String postid) {
         this.postid = postid;
+    }
+
+    public String getauthorName() {
+        return authorName;
+    }
+
+    public void setauthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
+    public String getAuthorProfile() {
+        return authorProfile;
+    }
+
+    public void setAuthorProfile(String authorProfile) {
+        this.authorProfile = authorProfile;
     }
 }

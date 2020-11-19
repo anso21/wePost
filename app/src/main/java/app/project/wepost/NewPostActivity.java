@@ -24,8 +24,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -41,6 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class NewPostActivity extends AppCompatActivity {
 
     private static final int Gallery_Pick = 1;
+    private static final String TAG = "NewPostActivity";
 
     private EditText postContent;
     private TextView addImage;
@@ -51,6 +55,8 @@ public class NewPostActivity extends AppCompatActivity {
     private String newPostContent;
     private String currentUserId;
     private String postId;
+    private String profilePicture;
+    private String userFullname;
 
     private ProgressDialog loadingBar;
     private Toolbar toolbar;
@@ -79,6 +85,24 @@ public class NewPostActivity extends AppCompatActivity {
         currentUserId = mAuth.getCurrentUser().getUid();
         postsImagesReference = FirebaseStorage.getInstance().getReference().child("Posts images");
         userPostContentDatabase = FirebaseDatabase.getInstance().getReference().child("Posts");
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId);
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("profilePicture")) {
+                    profilePicture = dataSnapshot.child("profilePicture").getValue().toString();
+                }
+                if (dataSnapshot.hasChild("fullname")) {
+                    userFullname = dataSnapshot.child("fullname").getValue().toString();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         //Récupération des éléments du formulaire de création de post NewPost
 
@@ -139,46 +163,60 @@ public class NewPostActivity extends AppCompatActivity {
 
     //Méthode pour vérifier s'il y a au mmoins quelque à publier
     private void validateNewPostContent(){
+
         newPostContent = postContent.getText().toString().trim();
+        Calendar forCurentDate = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
+        saveCurrentDate = currentDate.format(forCurentDate.getTime());
+
+        Calendar forCurentTime = Calendar.getInstance();
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
+        saveCurrentTime = currentTime.format(forCurentTime.getTime());
+        postId =  saveCurrentDate + "-" + saveCurrentTime + "-" + currentUserId;
+        
         if (TextUtils.isEmpty(newPostContent) && imageUri == null) {
             Toast.makeText(this, "Choisissez quelque chose à publier!", Toast.LENGTH_SHORT).show();
-        } else {
-            Calendar forCurentDate = Calendar.getInstance();
-            SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
-            saveCurrentDate = currentDate.format(forCurentDate.getTime());
-
-            Calendar forCurentTime = Calendar.getInstance();
-            SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
-            saveCurrentTime = currentTime.format(forCurentTime.getTime());
-            postId = currentUserId + "-" + saveCurrentDate;
+        }
+        else {
 
             if (imageUri != null){
-                savePostImageIntoStorage(imageUri,postId);
-            }
+                saveImagePost(imageUri);
+            } 
             if (!TextUtils.isEmpty(newPostContent)) {
-
-                savePostIntoPostRef(postId,currentUserId,newPostContent,saveCurrentDate, saveCurrentTime);
+                saveTextPost();
             }
-            Toast.makeText(NewPostActivity.this,"Publication réussie",Toast.LENGTH_SHORT).show();
-            sendUserToMainActivity();
         }
+        Toast.makeText(NewPostActivity.this,"Publication réussie",Toast.LENGTH_SHORT).show();
+        sendUserToMainActivity();
     }
 
-    private void savePostIntoPostRef(String postid,String userId, String body,String createdDate, String createdTime) {
-        Posts post = new Posts(postid,userId, body, createdDate,createdTime);
-        HashMap postMap = post.postsMap();
-        userPostContentDatabase.child(currentUserId).child(postid).updateChildren(postMap).addOnCompleteListener(this, new OnCompleteListener() {
+    private void saveTextPost() {
+
+        Posts post = new Posts();
+
+        //chargement des données
+        post.setauthorName(userFullname);
+        post.setBody(newPostContent);
+        post.setAuthorProfile(profilePicture);
+        post.setcreatedDate(saveCurrentDate);
+        post.setcreatedTime(saveCurrentTime);
+        post.setUserId(currentUserId);
+
+        HashMap textPostMap = post.textPostsMap();
+        userPostContentDatabase.child(postId).updateChildren(textPostMap).addOnCompleteListener(this, new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
-               if (!task.isSuccessful()){
-                    String message = task.getException().getMessage();
-                    Log.d("PostTag", "onComplete: Post => " + message);
-                }
+               if (task.isSuccessful()){
+                   Log.d(TAG, "onComplete: OK");
+               } else {
+                   String message = task.getException().getMessage();
+                   Log.d("PostTag", "onComplete: Post => " + message);
+               }
             }
         });
     }
 
-    private void savePostImageIntoStorage(Uri imageUri, final String postId) {
+    private void saveImagePost(Uri imageUri) {
         final StorageReference imagePath = postsImagesReference.child(postId +".jpg");
         imagePath.putFile(imageUri)
                 .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -193,19 +231,33 @@ public class NewPostActivity extends AppCompatActivity {
                 imagePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
+
                         String postImageUri = uri.toString();
-                        userPostContentDatabase.child(currentUserId).child(postId).child("postImage").setValue(postImageUri).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        
+                        Posts post = new Posts();
+                        
+                        //chargement des données
+                        post.setauthorName(userFullname);
+                        post.setAuthorProfile(profilePicture);
+                        post.setPostImage(postImageUri);
+                        post.setcreatedDate(saveCurrentDate);
+                        post.setcreatedTime(saveCurrentTime);
+                        post.setUserId(currentUserId);
+                        
+                        HashMap imagePost = post.imagePostsMap();
+                        
+                        //enregistrement dans la bd
+                        userPostContentDatabase.child(postId).updateChildren(imagePost).addOnCompleteListener(new OnCompleteListener() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            public void onComplete(@NonNull Task task) {
                                 if (task.isSuccessful()) {
-                                    Log.d("Saving ImageUri", "onComplete: Success");
+                                    Log.d(TAG, "onComplete: OK");
                                 } else {
                                     String message = task.getException().getMessage().toString();
-                                    Log.d("Error", "onComplete: " + message);
+                                    Log.d(TAG, "onComplete: " + message);
                                 }
                             }
                         });
-                        Log.d("image uri", "onSuccess: " + postImageUri);
                     }
                 });
             }
