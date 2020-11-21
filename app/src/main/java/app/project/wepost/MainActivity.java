@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar hToolbar;
 
     private CircleImageView navigationProfileImage;
+    private TextView navigationUserFullname;
+
     BottomNavigationView.OnNavigationItemSelectedListener navListiner = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -67,68 +69,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
-    private TextView navigationUserFullname;
-
-    private  FirebaseAuth mAuth;
-    private  String currentUserId;
+    private FirebaseAuth mAuth;
     private DatabaseReference userDatabase;
     private BottomNavigationView bottomNavigationView;
     private String profileUri;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        //innitialisation de l'user
-        mAuth = FirebaseAuth.getInstance();
-        Log.d("UserId", "onCreate: " + currentUserId);
-
-        //pointage de la table user dans la base de données
-        userDatabase = FirebaseDatabase.getInstance().getReference().child("users");
-
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(navListiner);
-
-        if (savedInstanceState == null) {
-
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new HomeFragment())
-                    .commit();
-        }
-
-        hToolbar = findViewById(R.id.home_toolbar);
-        setSupportActionBar(hToolbar);
-        getSupportActionBar().setTitle("wePost");
-
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawable_view);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        navigationView = findViewById(R.id.navigation_view);
-        View navView = navigationView.inflateHeaderView(R.layout.my_navigation_header);
-
-        navigationProfileImage = navView.findViewById(R.id.profile_image);
-        navigationUserFullname = navView.findViewById(R.id.nav_fullname);
-
-        navigationProfileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showProfileImageOnDialog();
-            }
-        });
-
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                UserMenuSelector(item);
-                return false;
-            }
-        });
-    }
+    private String currentUserId;
 
     @Override
     protected void onStart() {
@@ -255,5 +200,58 @@ public class MainActivity extends AppCompatActivity {
         startActivity(postIntent);
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
+        //innitialisation de l'user
+        mAuth = FirebaseAuth.getInstance();
+        Log.d("UserId", "onCreate: " + currentUserId);
+
+        //pointage de la table user dans la base de données
+        userDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navListiner);
+
+        if (savedInstanceState == null) {
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new HomeFragment())
+                    .commit();
+        }
+
+        hToolbar = findViewById(R.id.home_toolbar);
+        setSupportActionBar(hToolbar);
+        getSupportActionBar().setTitle("wePost");
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawable_view);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        navigationView = findViewById(R.id.navigation_view);
+        View navView = navigationView.inflateHeaderView(R.layout.my_navigation_header);
+
+        navigationProfileImage = navView.findViewById(R.id.profile_image);
+        navigationUserFullname = navView.findViewById(R.id.nav_fullname);
+
+        navigationProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProfileImageOnDialog();
+            }
+        });
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                UserMenuSelector(item);
+                return false;
+            }
+        });
+    }
 }

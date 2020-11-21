@@ -20,6 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,8 +48,14 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
      *
      * @param options
      */
-    Context context;
 
+    DatabaseReference likesRef;
+    DatabaseReference postsRef;
+    DatabaseReference userRef;
+    String currentUserId;
+    String authorId;
+    boolean likesChecker;
+    
     public MyPostAdatper(@NonNull FirebaseRecyclerOptions<Posts> options) {
         super(options);
     }
@@ -54,30 +63,44 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
     @Override
     protected void onBindViewHolder(@NonNull final PostViewHolder holder, int position, @NonNull final Posts model) {
 
-        String profileImage = model.getAuthorProfile();
+
+        final String postsId = getRef(position).getKey();
         String postPicture = model.getPostImage();
         String postDatetime = model.getcreatedDate() + " " +model.getcreatedTime();;
 
-        String postsId = getRef(position).getKey();
-        Log.d("TAG", "onBindViewHolder: => " + postsId);
+        likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
+        postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
+        userRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+
+        //Récupération de l'id du posteur
+        getAuthorInformations(postsId, model);
+        //Récupération du nom et de l'image de l'auteur du post
+        //getAuthorImageAndFullname(model,authorId);
+
+        //Si le post contient une image , le champ d'image est visible
         if (!TextUtils.isEmpty(postPicture)){
             holder.postImage.setVisibility(View.VISIBLE);
         }
 
+        //Chargement des données de posts
         Picasso.get().load(model.getPostImage()).into(holder.postImage);
-        Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(holder.authorImage);
+        Picasso.get().load(model.getAuthorProfile()).placeholder(R.drawable.profile).into(holder.authorImage);
         holder.authorName.setText(model.getauthorName());
-        holder.postDate.setText(postDatetime);
 
+        holder.postDate.setText(postDatetime);
         holder.postContent.setText(model.getBody());
+
+        checkLikeStatus(model, holder, postsId);
 
         holder.likesField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), "Aimer", Toast.LENGTH_SHORT).show();
+                likePost(postsId);
             }
         });
+
 
         holder.shareField.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,20 +118,108 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
 //                }
             }
         });
+    }
 
-//        holder.authorName.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                sendUserToEditActivity(v.getContext());
-//            }
-//        });
-//
-//        holder.authorImage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                sendUserToEditActivity(v.getContext());
-//            }
-//        });
+    private void getAuthorInformations(String postsId, final Posts model) {
+        //Recupération de l'id de l'auteur
+        postsRef.child(postsId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild("userId")) {
+                    authorId = snapshot.child("userId").getValue().toString();
+                    Log.d("TAG", "onDataChange: =>" + authorId);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        //Récupération du nom et de l'image de l'auteur du post
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (authorId != null) {
+                    if (snapshot.child(authorId).hasChild("profilePicture")) {
+                        String profilePicture = (String) snapshot.child(authorId).child("profilePicture").getValue();
+                        model.setAuthorProfile(profilePicture);
+                    }
+                    if (snapshot.child(authorId).hasChild("fullname")){
+                        String fullname = snapshot.child(authorId).child("fullname").getValue().toString();
+                        model.setauthorName(fullname);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+    }
+
+    private void checkLikeStatus(final Posts model, final PostViewHolder holder, final String postsId) {
+
+        likesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                int likes = (int) snapshot.child(postsId).getChildrenCount();
+
+                //conditions sur les text de likes
+                if (likes > 1) {
+                    model.setLikes(likes + " j'aimes");
+                } else {
+                    model.setLikes(likes + " j'aime");
+                }
+
+                //condition sur le champ de likes
+
+                if (snapshot.child(postsId).hasChild(currentUserId)) {
+                    holder.likesField.setText("Déjà aimé");
+
+                } else {
+                    holder.likesField.setText("J'aime");
+                }
+
+                //Affichage des likes
+                holder.likeCount.setText(model.getLikes());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void likePost(final String postId) {
+        likesChecker = true;
+        likesRef.child(postId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (likesChecker) {
+                    if (snapshot.hasChild(currentUserId)) {
+                        //dejà liké
+                        likesRef.child(postId).child(currentUserId).removeValue();
+                        likesChecker = false;
+                    } else {
+                        // pas encore liké
+                        likesRef.child(postId).child(currentUserId).setValue(true);
+                        likesChecker = false;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
 //    private void shareTextAndImage(String body, Bitmap bitmap) {
@@ -174,6 +285,7 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
         private ImageView postImage;
         private TextView likesField;
         private TextView shareField;
+        private TextView likeCount;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -183,6 +295,7 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
             postContent = itemView.findViewById(R.id.post_body);
             postImage = itemView.findViewById(R.id.post_image);
             postDate = itemView.findViewById(R.id.post_date);
+            likeCount = itemView.findViewById(R.id.like_count);
 
             likesField = itemView.findViewById(R.id.likes_field);
             shareField = itemView.findViewById(R.id.share_field);

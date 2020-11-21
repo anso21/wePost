@@ -47,7 +47,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView postsList;
     private DatabaseReference postsRef;
     private FirebaseAuth mAuth;
-    private  String currentUserId;
+    private String currentUserId;
     private MyPostAdatper adapter;
 
    // public HomeFragment() {
@@ -98,11 +98,10 @@ public class HomeFragment extends Fragment {
         postsList.setHasFixedSize(true);
 
         mAuth = FirebaseAuth.getInstance();
+        //currentUserId = mAuth.getCurrentUser().getUid();
         postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
         settUpRecycleView();
-
         return view;
-
     }
 
     private void settUpRecycleView() {

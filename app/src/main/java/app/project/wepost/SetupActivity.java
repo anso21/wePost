@@ -74,9 +74,9 @@ public class SetupActivity extends AppCompatActivity {
         currentUserId = mAuth.getCurrentUser().getUid();
 
         //innitialisation de la base de données de l'user
-        userDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId);
+        userDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
 
-        //innitalisation du storage tout en créant le dossier qui contiendra les images des users
+        //innitalisation du storage tout en créant le dossier qui contiendra les images des Users
         userProfileRef = FirebaseStorage.getInstance().getReference().child("Profile image");
 
         loadingBar = new ProgressDialog(this);

@@ -14,6 +14,7 @@ public class Posts {
     private Boolean viewed;
     private String authorName;
     private String authorProfile;
+    private String likes;
 
     public Posts() {
     }
@@ -49,17 +50,6 @@ public class Posts {
         imagePostsMap.put("createdDate",createdDate);
         imagePostsMap.put("createdTime",createdTime);
         return imagePostsMap;
-    }
-    public HashMap fullPostsMap(){
-        HashMap fullPostsMap = new HashMap();
-        fullPostsMap.put("userId",userId);
-        fullPostsMap.put("body",body);
-        fullPostsMap.put("postImage",postImage);
-        fullPostsMap.put("authorName",authorName);
-        fullPostsMap.put("authorProfile",authorProfile);
-        fullPostsMap.put("createdDate",createdDate);
-        fullPostsMap.put("createdTime",createdTime);
-        return fullPostsMap;
     }
 
     public String getcreatedDate() {
@@ -140,5 +130,13 @@ public class Posts {
 
     public void setAuthorProfile(String authorProfile) {
         this.authorProfile = authorProfile;
+    }
+
+    public String getLikes() {
+        return likes;
+    }
+
+    public void setLikes(String likes) {
+        this.likes = likes;
     }
 }

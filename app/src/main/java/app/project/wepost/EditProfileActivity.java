@@ -83,7 +83,7 @@ public class EditProfileActivity extends AppCompatActivity {
         currentUserId = mAuth.getCurrentUser().getUid();
 
         userProfileRef = FirebaseStorage.getInstance().getReference().child("Profile image");
-        userDb = FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId);
+        userDb = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
 
         userDb.addValueEventListener(new ValueEventListener() {
             @Override

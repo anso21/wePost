@@ -86,7 +86,7 @@ public class NewPostActivity extends AppCompatActivity {
         postsImagesReference = FirebaseStorage.getInstance().getReference().child("Posts images");
         userPostContentDatabase = FirebaseDatabase.getInstance().getReference().child("Posts");
 
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId);
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
