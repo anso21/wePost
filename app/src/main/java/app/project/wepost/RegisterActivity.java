@@ -29,7 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
     private static final String  TAG = "Création de compte";
 
     private EditText emailAddress;
-    private  EditText password;
+    private EditText password;
     private EditText confirmPassword;
     private Button registerBtn;
 
@@ -92,9 +92,9 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void createNewAccount() {
-        String userEmail = emailAddress.getText().toString();
-        String userPassword = password.getText().toString();
-        String userConfirmPassword = confirmPassword.getText().toString();
+        String userEmail = emailAddress.getText().toString().trim();
+        String userPassword = password.getText().toString().trim();
+        String userConfirmPassword = confirmPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(userEmail)) {
             Toast.makeText(RegisterActivity.this, "Veuillez renseigner votre adresse email", Toast.LENGTH_SHORT).show();
@@ -116,7 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         sendUserToSetupActivity();
                         Log.d(TAG, "Succès");
-                        Toast.makeText(RegisterActivity.this, "Votre compte a été créé avec succès.",
+                        Toast.makeText(RegisterActivity.this, "Votre compte a été créé av   ec succès.fournissez vos informations de profil",
                                 Toast.LENGTH_SHORT).show();
                         loadingBar.dismiss();
                     } else {

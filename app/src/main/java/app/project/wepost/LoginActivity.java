@@ -82,10 +82,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         final EditText emailField = new EditText(this);
         emailField.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         emailField.setHint("Email");
-        emailField.setMinEms(16);
+        emailField.setMinEms(20);
 
         linearLayout.addView(emailField);
-        linearLayout.setPadding(10, 10,10,10);
+        linearLayout.setPadding(30, 10,30,10);
         builder.setView(linearLayout);
 
         builder.setPositiveButton("Réinitialiser", new DialogInterface.OnClickListener() {
@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void sendResetEmail(String emailAdress) {
         loadingBar.setMessage("Envoie du mail de réinitialisation en cours...");
-        loadingBar.setCanceledOnTouchOutside(true);
+        loadingBar.setCanceledOnTouchOutside(false);
         loadingBar.show();
         mAuth.sendPasswordResetEmail(emailAdress).addOnCompleteListener(new OnCompleteListener<Void>() {
             @SuppressLint("LongLogTag")
@@ -166,7 +166,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }  else {
             loadingBar.setMessage("Connection en cours...");
             loadingBar.show();
-            loadingBar.setCanceledOnTouchOutside(true);
+            loadingBar.setCanceledOnTouchOutside(false);
 
             mAuth.signInWithEmailAndPassword(uEmail, uPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override

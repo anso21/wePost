@@ -10,16 +10,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:background="@drawable/custum_input"
-        android:orientation="vertical">
+        android:layout_margin="@dimen/medium_size"
+        android:background="@drawable/custom_lay"
+        android:orientation="vertical"
+        android:paddingTop="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp">
+            android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/author_image"
@@ -33,13 +32,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_margin="@dimen/medium_size">
+                android:orientation="vertical">
                 <TextView
                     android:id="@+id/author_name"
                     android:layout_width="wrap_content"
-                    android:layout_marginStart="@dimen/medium_size"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:text="@string/new_post_user_name"
                     android:textColor="@color/design_default_color_on_secondary"
                     android:textStyle="bold"
@@ -49,29 +47,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginStart="@dimen/medium_size">
-
-                    <TextView
-                        android:id="@+id/text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Public  "/>
+                    android:gravity="center_vertical">
 
                     <TextView
                         android:id="@+id/post_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Date   "
+                        android:text=" 1j"
                         android:textColor="@color/design_default_color_on_secondary"
-                        android:textStyle="bold"/>
+                        android:textStyle="italic"/>
 
-                    <TextView
+                    <!--<TextView
                         android:id="@+id/post_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Heure"
                         android:textColor="@color/design_default_color_on_secondary"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"/>-->
 
                 </LinearLayout>
 
@@ -85,9 +77,6 @@
             android:layout_height="wrap_content"
             android:textColor="@color/design_default_color_on_secondary"
             android:text="Contenu"
-            android:layout_marginStart="@dimen/medium_size"
-            android:layout_marginEnd="@dimen/medium_size"
-            android:layout_marginBottom="@dimen/medium_size"
             android:padding="@dimen/medium_size"
             />
 
@@ -120,6 +109,8 @@
                 android:drawableStart="@drawable/ic_baseline_thumb_up_24"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:layout_marginRight="@dimen/medium_size"
+                android:background="?attr/selectableItemBackground"
                 android:padding="@dimen/medium_size"/>
 
             <TextView
@@ -133,6 +124,7 @@
                 android:drawableStart="@drawable/ic_baseline_share_24"
                 android:layout_weight="1"
                 android:textColor="#000"
+                android:background="?attr/selectableItemBackground"
                 android:padding="@dimen/medium_size"/>
         </LinearLayout>
 

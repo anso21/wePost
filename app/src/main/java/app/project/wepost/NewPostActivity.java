@@ -166,7 +166,7 @@ public class NewPostActivity extends AppCompatActivity {
 
         newPostContent = postContent.getText().toString().trim();
         Calendar forCurentDate = Calendar.getInstance();
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd-M-yyyy");
         saveCurrentDate = currentDate.format(forCurentDate.getTime());
 
         Calendar forCurentTime = Calendar.getInstance();
@@ -185,9 +185,10 @@ public class NewPostActivity extends AppCompatActivity {
             if (!TextUtils.isEmpty(newPostContent)) {
                 saveTextPost();
             }
+
+            Toast.makeText(NewPostActivity.this,"Publication réussie",Toast.LENGTH_SHORT).show();
+            sendUserToMainActivity();
         }
-        Toast.makeText(NewPostActivity.this,"Publication réussie",Toast.LENGTH_SHORT).show();
-        sendUserToMainActivity();
     }
 
     private void saveTextPost() {
