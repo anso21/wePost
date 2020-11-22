@@ -25,31 +25,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!--<LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/user_new_post_img"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:src="@drawable/profile"
-                        app:civ_border_color="@color/colorAccent"
-                        app:civ_border_width="3dp"/>
-
-                    <TextView
-                        android:id="@+id/new_post_user_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/medium_16"
-                        android:text="@string/new_post_user_name"
-                        android:textColor="#565858"/>
-
-                </LinearLayout>-->
-
                 <EditText
                     android:id="@+id/post_content"
                     android:layout_width="match_parent"

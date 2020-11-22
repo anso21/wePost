@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +39,8 @@ import java.io.FileOutputStream;
 import app.project.wepost.EditProfileActivity;
 import app.project.wepost.MainActivity;
 import app.project.wepost.Models.Posts;
+import app.project.wepost.NewPostActivity;
+import app.project.wepost.PostFocus;
 import app.project.wepost.R;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -55,7 +59,7 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
     String currentUserId;
     String authorId;
     boolean likesChecker;
-    
+
     public MyPostAdatper(@NonNull FirebaseRecyclerOptions<Posts> options) {
         super(options);
     }
@@ -94,6 +98,29 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
 
         checkLikeStatus(model, holder, postsId);
 
+//        holder.postFocus.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//               v.getContext().startActivity(new Intent(v.getContext(),PostFocus.class));
+//            }
+//        });
+
+        holder.deletePost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.confirmPostDelete.setVisibility(View.VISIBLE);
+                holder.deletePost.setVisibility(View.GONE);
+            }
+        });
+
+        holder.confirmPostDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removePost(postsId);
+            }
+        });
+
         holder.likesField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,6 +145,45 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
 //                }
             }
         });
+    }
+
+    private void removePost(final String postsId) {
+        //Recupération de l'id de l'auteur
+        postsRef.child(postsId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild("userId")) {
+                    authorId = snapshot.child("userId").getValue().toString();
+                    if(authorId.equals(currentUserId)){
+                        postsRef.child(postsId).removeValue();
+                    }
+                    Log.d("TAG", "forRemove: =>" + authorId);
+                    Log.d("TAG", "forRemove1: =>" + currentUserId);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+//        postsRef.child(postsId).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                   if (snapshot.hasChild(currentUserId)) {
+//                       postsRef.child(postsId).removeValue();
+//                   } else {
+//                       //Toast.makeText(v.getContext(), "Vous ne pouvez supprimer ce post\n Vous n\'en êtes pas l'auteur !", Toast.LENGTH_SHORT).show();
+//                   }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
     }
 
     private void getAuthorInformations(String postsId, final Posts model) {
@@ -286,6 +352,9 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
         private TextView likesField;
         private TextView shareField;
         private TextView likeCount;
+        private ImageView postFocus;
+        private TextView deletePost;
+        private LinearLayout confirmPostDelete;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -295,6 +364,9 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
             postContent = itemView.findViewById(R.id.post_body);
             postImage = itemView.findViewById(R.id.post_image);
             postDate = itemView.findViewById(R.id.post_date);
+            //postFocus = itemView.findViewById(R.id.post_focus);
+            deletePost = itemView.findViewById(R.id.delete_post);
+            confirmPostDelete = itemView.findViewById(R.id.confirm_post_delete);
             likeCount = itemView.findViewById(R.id.like_count);
 
             likesField = itemView.findViewById(R.id.likes_field);

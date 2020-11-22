@@ -28,7 +28,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile"
                 app:civ_border_color="@color/colorAccent"
-                app:civ_border_width="1dp" />
+                app:civ_border_width="1dp"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,7 +42,6 @@
                     android:textColor="@color/design_default_color_on_secondary"
                     android:textStyle="bold"
                     android:textSize="@dimen/medium_16"/>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,6 +66,53 @@
 
                 </LinearLayout>
 
+            <!--    <ImageView
+                    android:id="@+id/post_focus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:src="@drawable/ic_more"
+                    android:clickable="true"/>  -->
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="right">
+
+                    <TextView
+                        android:id="@+id/delete_post"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_clear"
+                        android:clickable="true"
+                        android:gravity="center"/>
+
+                    <LinearLayout
+                        android:id="@+id/confirm_post_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:clickable="true"
+                        android:background="@drawable/custum_input"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_clear"
+                            android:layout_gravity="center"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="supprimer"/>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
@@ -77,8 +123,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/design_default_color_on_secondary"
             android:text="Contenu"
-            android:padding="@dimen/medium_size"
-            />
+            android:padding="@dimen/medium_size" />
 
         <ImageView
             android:id="@+id/post_image"
