@@ -109,8 +109,9 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
         holder.deletePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.confirmPostDelete.setVisibility(View.VISIBLE);
-                holder.deletePost.setVisibility(View.GONE);
+//                holder.confirmPostDelete.setVisibility(View.VISIBLE);
+//                holder.deletePost.setVisibility(View.GONE);
+                confirmCurrentUser(postsId,holder.deletePost,holder.confirmPostDelete);
             }
         });
 
@@ -147,6 +148,30 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
         });
     }
 
+    private void confirmCurrentUser(final String postsId, final TextView delPost, final LinearLayout confirmPostDel) {
+        //Recupération de l'id de l'auteur
+        postsRef.child(postsId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild("userId")) {
+                    authorId = snapshot.child("userId").getValue().toString();
+                    if(authorId.equals(currentUserId)){
+                        delPost.setVisibility(View.GONE);
+                        confirmPostDel.setVisibility(View.VISIBLE);
+                    }
+                    Log.d("TAG", "forRemove: =>" + authorId);
+                    Log.d("TAG", "forRemove1: =>" + currentUserId);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
     private void removePost(final String postsId) {
         //Recupération de l'id de l'auteur
         postsRef.child(postsId).addValueEventListener(new ValueEventListener() {
@@ -167,23 +192,6 @@ public class MyPostAdatper extends FirebaseRecyclerAdapter<Posts, MyPostAdatper.
 
             }
         });
-//        postsRef.child(postsId).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//
-//                   if (snapshot.hasChild(currentUserId)) {
-//                       postsRef.child(postsId).removeValue();
-//                   } else {
-//                       //Toast.makeText(v.getContext(), "Vous ne pouvez supprimer ce post\n Vous n\'en êtes pas l'auteur !", Toast.LENGTH_SHORT).show();
-//                   }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
     }
 
     private void getAuthorInformations(String postsId, final Posts model) {
